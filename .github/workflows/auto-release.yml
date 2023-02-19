@@ -11,21 +11,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
 
-      - name: Install libboost-test
-        run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
+      - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
-      - name: Cmake
-        run: cmake HW1 -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake HW1 -DPATCH_VERSION=${{ github.run_number }}
       
-      - name: Build
-        run: cmake --build .
+      - run: cmake --build .
 
-      - name: Build test
-        run: cmake --build . --target test
+      - run: cmake --build . --target test
 
-      - name: Build package
-        run: cmake --build . --target package
+      - run: cmake --build . --target package
 
       - name: Create release
         id: create_release
@@ -45,6 +42,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./OTUS-C-Professional-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: OTUS-C-Professional-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
