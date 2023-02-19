@@ -9,10 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./HW1
-
     steps:
       - uses: actions/checkout@v3
 
@@ -20,7 +16,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
       - name: Cmake
-        run: cmake . -DPATCH_VERSION=${{ github.run_number }}
+        run: cmake HW1 -DPATCH_VERSION=${{ github.run_number }}
       
       - name: Build
         run: cmake --build .
@@ -49,6 +45,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ../OTUS-C-Professional-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./OTUS-C-Professional-0.0.${{ github.run_number }}-Linux.deb
           asset_name: OTUS-C-Professional-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
