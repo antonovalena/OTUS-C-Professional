@@ -9,27 +9,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./HW1
-
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
 
-      - name: Install libboost-test
-        run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
+      - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
-      - name: Cmake
-        run: cmake . -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake HW1 -DPATCH_VERSION=${{ github.run_number }}
       
-      - name: Build
-        run: cmake --build .
+      - run: cmake --build .
 
-      - name: Build test
-        run: cmake --build . --target test
+      - run: cmake --build . --target test
 
-      - name: Build package
-        run: cmake --build . --target package
+      - run: cmake --build . --target package
 
       - name: Create release
         id: create_release
