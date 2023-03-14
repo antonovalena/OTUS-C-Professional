@@ -11,27 +11,37 @@
 // ("11.", '.') -> ["11", ""]
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
-std::vector<std::string> split(const std::string &str, char d)
+template<typename T>
+std::vector<T> split(const std::string &str, char d)
 {
-    std::vector<std::string> r;
+    std::vector<T> r;
 
     std::string::size_type start = 0;
     std::string::size_type stop = str.find_first_of(d);
+
     while(stop != std::string::npos)
     {
-        r.push_back(str.substr(start, stop - start));
+        if constexpr (std::is_integral<T>::value) {
+            r.push_back(std::atoi(str.substr(start, stop - start).c_str()));
+        } else {
+            r.push_back(str.substr(start, stop - start));
+        }
 
         start = stop + 1;
         stop = str.find_first_of(d, start);
     }
 
-    r.push_back(str.substr(start));
+    if constexpr (std::is_integral<T>::value) {
+        r.push_back(std::atoi(str.substr(start).c_str()));
+    } else {
+        r.push_back(str.substr(start));
+    }
 
     return r;
 }
 
-void print_ip_address(const std::vector<std::string>& ip) {
-    for(std::vector<std::string>::const_iterator ip_part = ip.cbegin(); ip_part != ip.cend(); ++ip_part) {
+void print_ip_address(const std::vector<int>& ip) {
+    for(auto ip_part = ip.cbegin(); ip_part != ip.cend(); ++ip_part) {
         if (ip_part != ip.cbegin())
         {
             std::cout << ".";
@@ -42,11 +52,11 @@ void print_ip_address(const std::vector<std::string>& ip) {
 }
 
 struct less_ipv4_address {
-    inline bool operator() (const std::vector<std::string>& v1, const std::vector<std::string>& v2) {
+    inline bool operator() (const std::vector<int>& v1, const std::vector<int>& v2) {
        for(size_t ind = 0; ind < 4; ++ind) {
-            if (std::atoi(v1[ind].c_str()) < std::atoi(v2[ind].c_str())) {
+            if (v1[ind] < v2[ind]) {
                 return true;
-            } else if (std::atoi(v1[ind].c_str()) > std::atoi(v2[ind].c_str())) {
+            } else if (v1[ind] > v2[ind]) {
                 return false;
             }
        }
@@ -54,22 +64,22 @@ struct less_ipv4_address {
     }
 };
 
-void filter_by_mask(std::vector<std::vector<std::string>>& v, const std::vector<int>& mask) {
+void filter_by_mask(std::vector<std::vector<int>>& v, const std::vector<int>& mask) {
     if (mask.size() > 4) {
         std::cout << "Mask of size " << mask.size() << " is too big, cannot filter ipv4 address by it" << std::endl;
         return;
     }
 
-    auto has_mask = [mask](const std::vector<std::string>& ip_address) {
+    auto has_mask = [mask](const std::vector<int>& ip_address) {
         for (size_t ind = 0; ind < mask.size(); ++ind) {
-            if(std::atoi(ip_address[ind].c_str()) != mask[ind]) {
+            if(ip_address[ind] != mask[ind]) {
                 return false;
             }
         }
         return true;
     };
 
-    for(std::vector<std::vector<std::string> >::reverse_iterator ip = v.rbegin(); ip != v.rend(); ++ip)
+    for(auto ip = v.rbegin(); ip != v.rend(); ++ip)
         {   
             if (!has_mask(*ip)) {
                 continue;
@@ -79,16 +89,11 @@ void filter_by_mask(std::vector<std::vector<std::string>>& v, const std::vector<
         }
 }
 
-void filer_by_any(std::vector<std::vector<std::string>>& v, const int byte) {
-    auto has_byte = [byte](const std::vector<std::string>& ip_address) {
-        for (size_t ind = 0; ind < ip_address.size(); ++ind) {
-            if (std::atoi(ip_address[ind].c_str()) == byte) {
-                return true;
-            }
-        }
-        return false;
+void filer_by_any(std::vector<std::vector<int>>& v, const int byte) {
+    auto has_byte = [byte](const std::vector<int>& ip_address) {
+        return std::find(ip_address.begin(), ip_address.end(), byte) != ip_address.end();
     };
-    for(std::vector<std::vector<std::string> >::reverse_iterator ip = v.rbegin(); ip != v.rend(); ++ip)
+    for(auto ip = v.rbegin(); ip != v.rend(); ++ip)
         {   
             if (!has_byte(*ip)) {
                 continue;
@@ -102,12 +107,12 @@ int main(int , char **)
 {
     try
     {
-        std::vector<std::vector<std::string> > ip_pool;
+        std::vector<std::vector<int> > ip_pool;
 
         for(std::string line; std::getline(std::cin, line);)
         {
-            std::vector<std::string> v = split(line, '\t');
-            if (auto next_address = split(v.at(0), '.'); next_address.size() != 4) {
+            std::vector<std::string> v = split<std::string>(line, '\t');
+            if (auto next_address = split<int>(v.at(0), '.'); next_address.size() != 4) {
                 std::cout << "Wrong format: cant add ip address " << line  << v.size()<< std::endl;
             } else {
                 ip_pool.push_back(next_address);
@@ -116,7 +121,7 @@ int main(int , char **)
 
         std::sort(ip_pool.begin(), ip_pool.end(), less_ipv4_address());
 
-        for(std::vector<std::vector<std::string> >::reverse_iterator ip = ip_pool.rbegin(); ip != ip_pool.rend(); ++ip)
+        for(auto ip = ip_pool.rbegin(); ip != ip_pool.rend(); ++ip)
         {
             print_ip_address(*ip);
             std::cout << std::endl;
