@@ -31,7 +31,7 @@ std::vector<std::string> split(const std::string &str, char d)
 }
 
 void print_ip_address(const std::vector<std::string>& ip) {
-    for(std::vector<std::string>::const_iterator ip_part = ip.cbegin(); ip_part != ip.cend(); ++ip_part) {
+    for(auto ip_part = ip.cbegin(); ip_part != ip.cend(); ++ip_part) {
         if (ip_part != ip.cbegin())
         {
             std::cout << ".";
@@ -44,9 +44,11 @@ void print_ip_address(const std::vector<std::string>& ip) {
 struct less_ipv4_address {
     inline bool operator() (const std::vector<std::string>& v1, const std::vector<std::string>& v2) {
        for(size_t ind = 0; ind < 4; ++ind) {
-            if (std::atoi(v1[ind].c_str()) < std::atoi(v2[ind].c_str())) {
+            int ip1_byte = std::atoi(v1[ind].c_str());
+            int ip2_byte = std::atoi(v2[ind].c_str());
+            if (ip1_byte < ip2_byte) {
                 return true;
-            } else if (std::atoi(v1[ind].c_str()) > std::atoi(v2[ind].c_str())) {
+            } else if (ip1_byte > ip2_byte) {
                 return false;
             }
        }
@@ -69,7 +71,7 @@ void filter_by_mask(std::vector<std::vector<std::string>>& v, const std::vector<
         return true;
     };
 
-    for(std::vector<std::vector<std::string> >::reverse_iterator ip = v.rbegin(); ip != v.rend(); ++ip)
+    for(auto ip = v.rbegin(); ip != v.rend(); ++ip)
         {   
             if (!has_mask(*ip)) {
                 continue;
@@ -81,14 +83,10 @@ void filter_by_mask(std::vector<std::vector<std::string>>& v, const std::vector<
 
 void filer_by_any(std::vector<std::vector<std::string>>& v, const int byte) {
     auto has_byte = [byte](const std::vector<std::string>& ip_address) {
-        for (size_t ind = 0; ind < ip_address.size(); ++ind) {
-            if (std::atoi(ip_address[ind].c_str()) == byte) {
-                return true;
-            }
-        }
-        return false;
+        const std::string byte_str = std::to_string(byte);
+        return std::find(ip_address.begin(), ip_address.end(), byte_str) != ip_address.end();
     };
-    for(std::vector<std::vector<std::string> >::reverse_iterator ip = v.rbegin(); ip != v.rend(); ++ip)
+    for(auto ip = v.rbegin(); ip != v.rend(); ++ip)
         {   
             if (!has_byte(*ip)) {
                 continue;
@@ -116,7 +114,7 @@ int main(int , char **)
 
         std::sort(ip_pool.begin(), ip_pool.end(), less_ipv4_address());
 
-        for(std::vector<std::vector<std::string> >::reverse_iterator ip = ip_pool.rbegin(); ip != ip_pool.rend(); ++ip)
+        for(auto ip = ip_pool.rbegin(); ip != ip_pool.rend(); ++ip)
         {
             print_ip_address(*ip);
             std::cout << std::endl;
