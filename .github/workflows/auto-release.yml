@@ -16,11 +16,11 @@ jobs:
 
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
-      - run: cmake HW2 -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake HW3 -DPATCH_VERSION=${{ github.run_number }}
       
       - run: cmake --build .
 
-      - run: cmake --build . --target ip_filter
+      - run: cmake --build . --target custom_tools
 
       - run: cmake --build . --target package
 
