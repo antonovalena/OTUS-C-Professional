@@ -16,11 +16,11 @@ jobs:
 
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
-      - run: cmake HW2 -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake HW3 -DPATCH_VERSION=${{ github.run_number }}
       
       - run: cmake --build .
 
-      - run: cmake --build . --target ip_filter
+      - run: cmake --build . --target custom_tools
 
       - run: cmake --build . --target package
 
@@ -42,6 +42,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./ip_filter-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: ip_filter-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./custom_tools-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: custom_tools-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
