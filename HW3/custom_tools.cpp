@@ -35,6 +35,15 @@ void test_allocator() {
     print_factorial_map<reserving_allocator<std::pair<const int, int>, 10> >(customAllocFactorialMap);
 }
 
+template <typename T, typename Alloc>
+void printCustomContainer(CustomContainer<T, Alloc>& container) {
+    Node<T>* cur_node = container.getNodes();
+    while (cur_node != nullptr) {
+        std::cout << cur_node->value() << std::endl;
+        cur_node = cur_node->prev();
+    }
+}
+
 void test_container() {
     const int n = 10;
 
@@ -44,7 +53,7 @@ void test_container() {
     for (int i = 0; i < n; ++i) {
         container_std.add(i);
     }
-    container_std.print();
+    printCustomContainer<int, std::allocator<Node<int> > >(container_std);
 
     std::cout << "Custom allocator section" << std::endl;
 
@@ -52,7 +61,7 @@ void test_container() {
     for (int i = 0; i < n; ++i) {
         container_custom.add(i);
     }
-    container_custom.print();
+    printCustomContainer<int, reserving_allocator<Node<int>, n> >(container_custom);
 
 }
 

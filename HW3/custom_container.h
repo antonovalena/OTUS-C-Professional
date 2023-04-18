@@ -1,4 +1,5 @@
 #include <iostream>
+#include <exception>
 
 
 template<typename T>
@@ -18,9 +19,11 @@ template<typename T, typename Allocator>
 struct CustomContainer {
     bool empty() const { return nodes_ == nullptr; }
 
+    Node<T>* getNodes() { return nodes_; }
+
     void extract() {
         if (empty()) {
-            return;
+            throw std::runtime_error("Cannot extract from empty container");
         }
         Node<T>* prev_filled = nodes_->prev();
         allocator_.destroy(nodes_);
@@ -33,19 +36,10 @@ struct CustomContainer {
         try {
             nodes_ = allocator_.allocate(1);
         } catch (...) {
-            std::cout << "Failed to allocate memory" << std::endl;
-            return;
+            throw std::runtime_error("Failed to allocate memory");
         }
 
         allocator_.construct(nodes_, val, cur_top);
-    }
-
-    void print() {
-        Node<T>* cur_node = nodes_;
-        while (cur_node != nullptr) {
-            std::cout << cur_node->value() << std::endl;
-            cur_node = cur_node->prev();
-        }
     }
 
     ~CustomContainer() {
