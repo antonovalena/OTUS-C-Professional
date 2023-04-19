@@ -21,7 +21,9 @@ struct reserving_allocator {
 	~reserving_allocator() = default;
 
 	template <typename U>
-	reserving_allocator(const reserving_allocator<U> &) {}
+	reserving_allocator(const reserving_allocator<U, capacity> &allocator) {
+		allocator.allocated_size = 0;
+	}
 
 	T *allocate(std::size_t n) {
         if (allocated_size + n > capacity) {
