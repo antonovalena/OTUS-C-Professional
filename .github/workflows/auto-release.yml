@@ -16,11 +16,11 @@ jobs:
 
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
-      - run: cmake HW4 -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake HW5 -DPATCH_VERSION=${{ github.run_number }}
       
       - run: cmake --build .
 
-      - run: cmake --build . --target print_ip
+      - run: cmake --build . --target editor
 
       - run: cmake --build . --target package
 
@@ -42,8 +42,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./print_ip-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: print_ip-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./editor-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: editor-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
 
       # Build the HTML documentation
@@ -52,7 +52,7 @@ jobs:
         uses: mattnotmitt/doxygen-action@v1.1.0
         with:
           doxyfile-path: ./Doxyfile
-          working-directory: HW4
+          working-directory: HW5
     
       # Deploy the HTML documentation to GitHub Pages
       - name: GH Pages Deployment
@@ -60,7 +60,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./HW4/doc/
+          publish_dir: ./HW5/doc/html
           enable_jekyll: false
           allow_empty_commit: false
           force_orphan: true
