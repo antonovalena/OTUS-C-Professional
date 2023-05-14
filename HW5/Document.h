@@ -1,17 +1,26 @@
-#include"Image.h"
-#include<vector>
+#pragma once
 
-class Document {
+#include "Square.h"
+#include <vector>
+#include <memory>
+
+class Document : public IEditable {
 public:
     Document() {}
+
+    virtual ~Document() = default;
     
-    void saveToFile(const char* filename);
+    void print(std::ostream& out) override;
 
-    void loadFromFile(const char* filename);
+    void saveToFile(const char*) { /*implementation*/ };
 
-    void addImage(Image img);
+    void loadFromFile(const char*) { /*implementation*/ };
+
+    void addSquare(int side);
+
+    bool removeShape(IShape*) { /*implementation*/ return true; };
 
 private:
 
-    std::vector<Image> images_;
+    std::vector<std::unique_ptr<IShape> > shapes_;
 };

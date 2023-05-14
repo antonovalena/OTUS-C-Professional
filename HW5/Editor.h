@@ -1,6 +1,8 @@
-#include"Document.h"
-#include<map>
-#include<memory>
+#pragma once
+
+#include "Document.h"
+#include <map>
+#include <memory>
 
 class Editor{
 public:
@@ -14,23 +16,16 @@ public:
         documents_[docName] = std::make_unique<Document>();
     }
 
-    void exportDocument(const char* docName, const char* filename) {
-        auto doc = documents_.find(docName);
-        if (doc == documents_.end()) {
-            return;
+    Document* getDocument(const char* docName) {
+        if (documents_.find(docName) == documents_.end()) {
+            return nullptr;
         }
+        return documents_[docName].get();
+    } 
 
-        doc->second->saveToFile(filename);
-    }
+    void exportDocument(const char* /*docName*/, const char* /*filename*/) {}
 
-    void importDocument(const char* docName, const char* fileame) {
-        if(!documents_.count(docName)) {
-            createDocument(docName);
-        }
-
-        auto doc = documents_.find(docName);
-        doc->second->loadFromFile(fileame);
-    }
+    void importDocument(const char* /*docName*/, const char* /*fileame*/) {}
 
 
 private:

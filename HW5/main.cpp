@@ -5,6 +5,6 @@ int main() {
 
     editor.createDocument("myDoc");
 
-    editor.importDocument("myDoc", "../myDoc_import.txt");
-    editor.exportDocument("myDoc", "../myDoc_export.txt");
+    auto myDoc = editor.getDocument("myDoc");
+    myDoc->addSquare(2);
 }

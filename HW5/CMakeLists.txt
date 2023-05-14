@@ -4,16 +4,21 @@ set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(editor VERSION ${PROJECT_VESRION})
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
+    -std=c++17 \
+    -Wall \
+    -g \
+")
 
 add_executable(editor main.cpp)
 
-add_library(docLib Document.cpp Image.cpp)
+add_library(docLib Document.cpp)
 target_link_libraries(editor PRIVATE docLib) 
 
 set_target_properties(editor PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
 )
 target_include_directories(editor
     PRIVATE "${CMAKE_BINARY_DIR}"
@@ -25,7 +30,7 @@ if (MSVC)
     )
 else ()
     target_compile_options(editor PRIVATE
-        -Wall -Wextra -pedantic -Werror
+        -Wall -Wextra -pedantic -Werror -std=c++17
     )
 endif()
 

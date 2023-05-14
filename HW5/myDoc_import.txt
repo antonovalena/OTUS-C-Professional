@@ -1,2 +1,0 @@
-{Img: "cat" size: 10x20 description: black cat}
-{Img: "tree" size: 20x100 description: christmas tree}
