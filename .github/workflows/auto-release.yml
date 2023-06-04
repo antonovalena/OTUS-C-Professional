@@ -16,11 +16,11 @@ jobs:
 
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
-      - run: cmake HW6 -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake HW7 -DPATCH_VERSION=${{ github.run_number }}
       
       - run: cmake --build .
 
-      - run: cmake --build . --target matrix
+      - run: cmake --build . --target bulk
 
       - run: cmake --build . --target package
 
@@ -42,8 +42,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./matrix-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: matrix-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./bulk-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: bulk-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
 
       # Build the HTML documentation
